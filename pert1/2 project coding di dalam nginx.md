@@ -11,14 +11,8 @@ Karena pintu masuk utama Anda hanya ada satu IP (`192.168.12.12`), Nginx bertuga
 
 | Metode | URL yang Diketik Pengunjung | Cara Kerja Nginx |
 | --- | --- | --- |
-| **Beda Port** | `192.168.12.12` (Otomatis port 80 ke Next.js)<br>
-
-<br>`192.168.12.12:81` (Ke Python) | Nginx mendengarkan port 80 dan 81, lalu meneruskannya ke port lokal 3000 dan 5000. |
-| **Beda Path** | `192.168.12.12/sekolah`<br>
-
-<br>`192.168.12.12/kasir` | Nginx mendengarkan port 80, membaca akhiran *path*, lalu meneruskan ke aplikasi yang sesuai. |
-| **Beda Domain Lokal** | `sekolah.local`<br>
-
-<br>`kasir.local` | Nginx membedakan dari nama domain (`server_name`). Syaratnya, Anda harus mengatur DNS di router (misal: MikroTik) agar domain tersebut mengarah ke `192.168.12.12`. |
+| **Beda Port** | `192.168.12.12` (Otomatis port 80 ke Next.js) `192.168.12.12:81` (Ke Python) | Nginx mendengarkan port 80 dan 81, lalu meneruskannya ke port lokal 3000 dan 5000. |
+| **Beda Path** | `192.168.12.12/sekolah` `192.168.12.12/kasir` | Nginx mendengarkan port 80, membaca akhiran *path*, lalu meneruskan ke aplikasi yang sesuai. |
+| **Beda Domain Lokal** | `sekolah.local` `kasir.local` | Nginx membedakan dari nama domain (`server_name`). Syaratnya, Anda harus mengatur DNS di router (misal: MikroTik) agar domain tersebut mengarah ke `192.168.12.12`. |
 
 Cukup memilih salah satu metode di atas untuk diatur dalam file konfigurasi Nginx.

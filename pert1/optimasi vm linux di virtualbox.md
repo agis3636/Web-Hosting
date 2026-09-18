@@ -24,6 +24,7 @@ Penyebab utama animasi patah-patah pada Ubuntu Desktop di *virtual machine* adal
 Setelah Ubuntu Desktop selesai diinstal, mahasiswa **wajib** memasang *VirtualBox Guest Additions*. Tanpa ini, *mouse* akan terasa berat, resolusi layar terkunci kecil, dan fitur *copy-paste* dari Windows ke Ubuntu tidak akan jalan.
 
 Minta mahasiswa membuka terminal di Ubuntu mereka dan jalankan perintah ini:
+
 `sudo apt update && sudo apt install virtualbox-guest-x11 virtualbox-guest-utils virtualbox-guest-dkms -y`
 
 Lalu *restart* mesin virtual tersebut.

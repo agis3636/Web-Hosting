@@ -129,7 +129,7 @@ Jika membandingkan dua pendekatan penayangan website dalam satu server, perbedaa
 | Metode | Jalur / Port | Contoh Alamat Akses | Karakteristik |
 | --- | --- | --- | --- |
 | **Metode 1: Sub-path** | Port 80 (Standar) | `http://192.168.80.18/sekolah` `http://192.168.80.18/kasir` | Menggunakan satu port utama (80) dan memisahkan folder melalui ekstensi direktori URL. |
-| **Metode 2: Port Berbeda** | Port 8080 & 8181 | `http://192.168.80.18:8080``http://192.168.80.18:8181` | Memisahkan jalur akses menggunakan nomor *port* yang berbeda untuk setiap aplikasi. |
+| **Metode 2: Port Berbeda** | Port 8080 & 8181 | `http://192.168.80.18:8080` `http://192.168.80.18:8181` | Memisahkan jalur akses menggunakan nomor *port* yang berbeda untuk setiap aplikasi. |
 
 ---
 

@@ -52,7 +52,9 @@ ssh username_ubuntu@ip_ubuntu
 
 
 *(Contoh: `ssh agis@192.168.1.15`)*
+
 3. Jika muncul pertanyaan *"Are you sure you want to continue connecting?"*, ketik `yes` lalu Enter.
+
 4. Masukkan *password* Ubuntu Anda (saat mengetik *password*, teks tidak akan muncul di layar, ini normal).
 
 Sekarang Anda sudah masuk ke server melalui CMD Windows dan bisa dengan bebas melakukan *copy-paste* perintah-perintah konfigurasi Nginx dan CoreDNS selanjutnya!

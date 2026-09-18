@@ -1,8 +1,6 @@
-Mengelola server langsung dari jendela VirtualBox memang sangat merepotkan karena tidak bisa *copy-paste* perintah dengan mudah. Menggunakan SSH adalah solusi yang tepat agar bisa mengontrol server melalui terminal/Command Prompt di laptop utama (Windows/Mac).
+# Cara Instal OpenSSH Server di Ubuntu
 
-Berikut cara cepat menginstal dan menghubungkan SSH ke Ubuntu Server di VirtualBox:
-
-### 1. Instal OpenSSH Server di Ubuntu
+### 1. Install
 
 Jika Anda lupa mencentang "Install OpenSSH Server" saat proses instalasi awal tadi, Anda harus menginstalnya secara manual sekarang. Buka terminal Ubuntu di dalam VirtualBox dan ketik:
 
@@ -63,9 +61,7 @@ Sekarang Anda sudah masuk ke server melalui CMD Windows dan bisa dengan bebas me
 ---
 ---
 
-Secara *default*, Ubuntu melarang pengguna `root` untuk *login* langsung melalui SSH demi alasan keamanan. Namun, untuk kebutuhan lab lokal, Anda bisa mengizinkannya dengan mengedit konfigurasi SSH.
-
-Berikut cara mengizinkan *login* SSH sebagai `root`:
+# Cara mengizinkan *login* SSH sebagai `root`
 
 **1. Setel Password untuk Root (Jika Belum Ada)**
 Secara bawaan, akun `root` di Ubuntu tidak memiliki *password* aktif. Anda harus membuat *password*-nya terlebih dahulu.
@@ -118,3 +114,45 @@ ssh root@ip_ubuntu
 ```
 
 Masukkan *password* `root` yang baru Anda buat pada langkah pertama. Sekarang Anda sudah memiliki akses penuh sebagai administrator tertinggi tanpa perlu mengetik `sudo` lagi saat praktik instalasi Nginx dan konfigurasi HTML selanjutnya.
+
+---
+---
+---
+
+# Cara agar Network NAT VirtualBox bisa Connect dengan Host
+
+### 1. Port Forwarding (Tetap Pakai NAT)
+
+Gunakan cara ini jika Anda hanya butuh akses SSH ke Ubuntu tanpa mengubah pengaturan jaringan. Kekurangannya: **tetap tidak bisa di-ping**.
+
+1. Di layar utama VirtualBox, klik kanan mesin virtual Ubuntu Anda -> **Settings** -> **Network**.
+2. Di bagian **Adapter 1** (yang menggunakan NAT), klik menu panah **Advanced** di bawahnya.
+3. Klik tombol **Port Forwarding**.
+4. Klik ikon tambah (➕) berwarna hijau di pojok kanan atas, lalu isi datanya seperti ini:
+* **Name:** `SSH`
+* **Protocol:** `TCP`
+* **Host IP:** *(biarkan kosong)*
+* **Host Port:** `2222`
+* **Guest IP:** *(biarkan kosong)*
+* **Guest Port:** `22`
+
+
+5. Klik **OK** dan simpan pengaturan.
+6. Buka CMD Windows, jalankan perintah ini untuk masuk SSH:
+`ssh root@127.0.0.1 -p 2222`
+
+---
+
+### 2.Tambah "Host-Only Adapter"
+
+Gunakan cara ini jika target Anda adalah agar mesin virtual bisa **di-ping** dan dipanggil lewat domain lokal di laptop mahasiswa, tanpa perlu terhubung ke jaringan Wi-Fi kampus (karena Wi-Fi kampus sering memblokir komunikasi antar-klien).
+
+1. Matikan Ubuntu Server Anda terlebih dahulu (`sudo poweroff`).
+2. Buka **Settings** -> **Network** di VirtualBox.
+3. Biarkan **Adapter 1** tetap **NAT** (agar Ubuntu tetap punya koneksi internet untuk menginstal Nginx).
+4. Pindah ke tab **Adapter 2**, centang **Enable Network Adapter**, lalu ubah opsi *Attached to* menjadi **Host-only Adapter**.
+5. Klik **OK** dan nyalakan ulang Ubuntu.
+6. Setelah *login*, ketik perintah `ip a`.
+7. Sekarang Anda akan melihat dua alamat IP aktif. Satu adalah `10.0.2.15` (milik NAT), dan satu lagi adalah IP baru (biasanya berawalan `192.168.56.x` milik Host-Only).
+
+Gunakan IP baru yang berawalan `192.168.56.x` tersebut di CMD Windows Anda. Ping dan koneksi SSH (`ssh root@192.168.56.x`) akan langsung berhasil tersambung.

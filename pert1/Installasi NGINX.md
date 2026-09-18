@@ -108,3 +108,189 @@ sudo systemctl status nginx
 * `status nginx`: Memastikan mesin menyala tanpa gangguan.
 * *Pemecahan Masalah:* Jika muncul tulisan merah *failed* atau *address already in use*, artinya *port* 80 sedang dipakai oleh aplikasi lain (biasanya Apache2). Anda harus mematikan Apache2 dengan perintah `sudo systemctl stop apache2 && sudo systemctl disable apache2`.
 * *Tombol yang dipencet:* Perintah `status` terkadang membuat layar terminal tertahan untuk menampilkan log. Jika terminal tidak bisa diketik perintah baru, tekan tombol **q** pada *keyboard* untuk keluar dari mode laporan status.
+
+---
+
+---
+
+---
+
+
+# menggabungkan seluruh metode penayangan dua website (`sekolah` dan `kasir`) di satu server Ubuntu menggunakan Nginx.
+
+---
+
+# Hosting Multi-Website Nginx di Ubuntu
+
+#### 1. Perbandingan Metode Akses
+
+Jika membandingkan dua pendekatan penayangan website dalam satu server, perbedaannya dirangkum dalam tabel berikut:
+
+| Metode | Jalur / Port | Contoh Alamat Akses | Karakteristik |
+| --- | --- | --- | --- |
+| **Metode 1: Sub-path** | Port 80 (Standar) | `[http://192.168.80.18/sekolah](http://192.168.80.18/sekolah)` `[http://192.168.80.18/kasir](http://192.168.80.18/kasir)` | Menggunakan satu port utama (80) dan memisahkan folder melalui ekstensi direktori URL. |
+| **Metode 2: Port Berbeda** | Port 8080 & 8181 | `[http://192.168.80.18:8080](http://192.168.80.18:8080)` `[http://192.168.80.18:8181](http://192.168.80.18:8181)` | Memisahkan jalur akses menggunakan nomor *port* yang berbeda untuk setiap aplikasi. |
+
+---
+
+#### 2. Langkah 1: Membuat Direktori Penyimpanan Website
+
+Setiap website membutuhkan folder fisik terpisah di dalam server untuk menyimpan file kodingannya.
+
+* **Perintah Terminal:**
+```bash
+sudo mkdir -p /var/www/sekolah
+sudo mkdir -p /var/www/kasir
+
+```
+
+
+* **Penjelasan & Alasan:**
+* `sudo`: Menjalankan perintah dengan hak akses administrator tertinggi.
+* `mkdir`: Perintah dasar Linux untuk membuat folder baru (*make directory*).
+* `-p`: Parameter pengaman agar Linux membuatkan folder utama sekaligus sub-folder di dalamnya secara otomatis tanpa *error* jika sudah ada.
+* `/var/www/`: Direktori standar di Linux untuk menyimpan file penayangan web server.
+
+
+
+---
+
+#### 3. Langkah 2: Mengisi File Konten Website (`index.html`)
+
+Masukkan kode program HTML ke dalam masing-masing folder.
+
+* **Perintah Terminal:**
+```bash
+sudo nano /var/www/sekolah/index.html
+sudo nano /var/www/kasir/index.html
+
+```
+
+
+* **Penjelasan & Alasan:**
+* `nano`: Editor teks bawaan terminal untuk menulis atau menempel kodingan HTML.
+* Nama file wajib `index.html` agar dibaca otomatis oleh Nginx sebagai halaman utama.
+* *Cara simpan & keluar:* Tekan **Ctrl + O**, lalu **Enter**, kemudian **Ctrl + X**.
+
+
+
+---
+
+#### 4. Langkah 3: Konfigurasi Nginx (Pilih Salah Satu Metode)
+
+Hapus file konfigurasi bawaan agar tidak terjadi bentrok (*port conflict*):
+
+```bash
+sudo rm -f /etc/nginx/conf.d/default.conf
+
+```
+
+* **Opsi A: Konfigurasi Metode Sub-path (Satu Port 80)**
+Buat file konfigurasi utama:
+```bash
+sudo nano /etc/nginx/conf.d/web.conf
+
+```
+
+
+*Isi kodingan:*
+```nginx
+server {
+    listen 80;
+    server_name _;
+
+    location /sekolah {
+        alias /var/www/sekolah/;
+        index index.html;
+        try_files $uri $uri/ =404;
+    }
+
+    location /kasir {
+        alias /var/www/kasir/;
+        index index.html;
+        try_files $uri $uri/ =404;
+    }
+}
+
+```
+
+
+* **Opsi B: Konfigurasi Metode Port Berbeda (8080 & 8181)**
+Buat file konfigurasi web sekolah (`sekolah.conf`):
+```bash
+sudo nano /etc/nginx/conf.d/sekolah.conf
+
+```
+
+
+*Isi kodingan:*
+```nginx
+server {
+    listen 8080;
+    server_name _;
+    root /var/www/sekolah;
+    index index.html;
+}
+
+```
+
+
+Buat file konfigurasi web kasir (`kasir.conf`):
+```bash
+sudo nano /etc/nginx/conf.d/kasir.conf
+
+```
+
+
+*Isi kodingan:*
+```nginx
+server {
+    listen 8181;
+    server_name _;
+    root /var/www/kasir;
+    index index.html;
+}
+
+```
+
+
+
+---
+
+#### 5. Langkah 4: Pengaturan Firewall (UFW)
+
+Jika Anda menggunakan **Metode 2 (Port Berbeda)**, Anda wajib membuka *port* 8080 dan 8181 di firewall agar tidak terblokir. (Jika menggunakan Metode 1, cukup pastikan port 80 terbuka).
+
+* **Perintah Terminal:**
+```bash
+sudo ufw allow 80/tcp
+sudo ufw allow 8080/tcp
+sudo ufw allow 8181/tcp
+sudo ufw reload
+
+```
+
+
+* **Penjelasan & Alasan:**
+* `ufw allow .../tcp`: Membuka jalur komunikasi masuk pada *port* spesifik. Jika dilewati, browser akan memunculkan *error* `ERR_CONNECTION_TIMED_OUT`.
+* `ufw reload`: Menyegarkan aturan firewall tanpa mematikan sistem proteksi.
+
+
+
+---
+
+#### 6. Langkah 5: Verifikasi dan Penerapan Sistem
+
+Uji integritas sintaks Nginx dan terapkan perubahan tanpa mematikan layanan.
+
+* **Perintah Terminal:**
+```bash
+sudo nginx -t
+sudo systemctl reload nginx
+
+```
+
+
+* **Penjelasan & Alasan:**
+* `nginx -t`: Memeriksa apakah ada kesalahan pengetikan sintaks pada file konfigurasi. Pastikan bernilai *successful*.
+* `systemctl reload nginx`: Menerapkan pembaruan konfigurasi secara halus.

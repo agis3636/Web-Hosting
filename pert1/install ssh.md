@@ -130,12 +130,12 @@ Gunakan cara ini jika Anda hanya butuh akses SSH ke Ubuntu tanpa mengubah pengat
 2. Di bagian **Adapter 1** (yang menggunakan NAT), klik menu panah **Advanced** di bawahnya.
 3. Klik tombol **Port Forwarding**.
 4. Klik ikon tambah (➕) berwarna hijau di pojok kanan atas, lalu isi datanya seperti ini:
-* **Name:** `SSH`
-* **Protocol:** `TCP`
-* **Host IP:** *(biarkan kosong)*
-* **Host Port:** `2222`
-* **Guest IP:** *(biarkan kosong)*
-* **Guest Port:** `22`
+    * **Name:** `SSH`
+    * **Protocol:** `TCP`
+    * **Host IP:** *(biarkan kosong)*
+    * **Host Port:** `2222`
+    * **Guest IP:** *(biarkan kosong)*
+    * **Guest Port:** `22`
 
 
 5. Klik **OK** dan simpan pengaturan.
